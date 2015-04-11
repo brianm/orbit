@@ -1,15 +1,16 @@
-# Orbit
+# Orbit #
 
 Division of responsibility in deployment tool is between the agent, the coordinator, and the activity log.
 
-## Agent
+## Agent ##
 
-The agent performs the fine grained deployment action. This can be stopping an old docker container and starting a new one, using the Tomcat deployer, or stopping a service, updating an RPM, and starting the new service.
+The agent performs the fine grained deployment (or rollback) actions. This can be stopping an old docker container and starting a new one, using the Tomcat deployer, or stopping a service, updating an RPM, and starting the new service.
 
-## Coordinator
+## Coordinator ##
 
-The coordinator invokes agents to perform actions on service instances. It handles deployment workflows, notifies IRC channels, and reports on the status of things. All action flows through the coordinator.
+The coordinator invokes agents to do things. It maintains a tree of actions which it serializes into a scheduled sequence of fine grained commands to agents. It records what it plans to do, where it is, and what it has done in the Log.
 
-## Activity Log
+## Log ##
 
-The activity log keeps track of all the state involved in deployments. It maintains a traditional event log, as well as convenient denormalized views based on the event log.
+The log is a semi-transaction log of fine grained actions. It allows for rollback to a specific point in time, tag, etc. It is used by the coordinator to record actions and undos.
+
